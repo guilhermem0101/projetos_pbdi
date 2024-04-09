@@ -1,3 +1,59 @@
+--cursor vinculado (bound)
+--exibir nome de canal concatenado a seu numero de inscritos
+DO $$
+DECLARE 
+	--cursor bound (vinculado)
+	--1. declaração (ainda não aberto)
+	cur_nomes_e_inscritos CURSOR FOR 
+	SELECT youtuber, subscribers FROM tb_youtubers;
+	tupla RECORD;
+	resultado TEXT DEFAULT '';
+
+BEGIN
+	--2. Abertura do cursor
+	OPEN cur_nomes_e_inscritos;
+	FETCH cur_nomes_e_inscritos INTO tupla;
+	WHILE FOUND LOOP
+		--concatenção, operador ||
+		resultado := resultado || tupla.youtuber || ':' || tupla.subscribers || ', ';
+		FETCH cur_nomes_e_inscritos INTO tupla;
+	END LOOP;
+	CLOSE cur_nomes_e_inscritos;
+	RAISE NOTICE  '%', resultado;
+END;
+$$
+
+
+
+
+DO $$
+DECLARE
+	--1. Declaração
+	cur_nomes_a_partir_de REFCURSOR;
+	v_youtubers VARCHAR(200);
+	v_ano INT := 2008;
+	v_nome_tabela VARCHAR(200) := 'tb_youtubers';
+BEGIN
+	--2. Abertura do cursor
+	OPEN cur_nomes_a_partir_de FOR EXECUTE
+	format(
+		'
+			SELECT youtuber
+			FROM %s
+			WHERE started >= $1
+		', v_nome_tabela
+	) USING v_ano;
+	LOOP
+		FETCH cur_nomes_a_partir_de INTO v_youtubers;
+		EXIT WHEN NOT FOUND;
+		RAISE NOTICE '%', v_youtubers;
+	END LOOP;
+	--4. Fechamento do cursor 
+	CLOSE cur_nomes_a_partir_de;
+END;
+$$
+
+
 DO $$
 DECLARE
 	-- 1, Delaração do cursor (cursor não vinculado)
