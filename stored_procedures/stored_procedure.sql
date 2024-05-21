@@ -83,7 +83,7 @@ $$
 DECLARE
     valor1 INT := 2;
     valor2 INT := 3;
-BEGIN
+BEGIN  
     CALL sp_acha_maior(valor1, valor2);
     RAISE NOTICE '% é o maior', valor1;
 END;
