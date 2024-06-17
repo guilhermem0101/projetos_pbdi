@@ -209,3 +209,62 @@ valor_total, valor_a_pagar, troco;
 END;
 $$
 
+
+CREATE OR REPLACE PROCEDURE sp_obter_notas_para_compor_o_troco (OUT resultado
+VARCHAR(500), IN troco INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    notas200 INT := 0;
+    notas100 INT := 0;
+    notas50 INT := 0;
+    notas20 INT := 0;
+    notas10 INT := 0;
+    notas5 INT := 0;
+    notas2 INT := 0;
+    moedas1 INT := 0;
+BEGIN
+    notas200 := troco / 200;
+    notas100 := troco % 200 / 100;
+    notas50 := troco % 200 % 100 / 50;
+    notas20 := troco % 200 % 100 % 50 / 20;
+    notas10 := troco % 200 % 100 % 50 % 20 / 10;
+    notas5 := troco % 200 % 100 % 50 % 20 % 10 / 5;
+    notas2 := troco % 200 % 100 % 50 % 20 % 10 % 5 / 2;
+    moedas1 := troco % 200 % 100 % 50 % 20 % 10 % 5 % 2;
+    resultado := concat(
+        -- E é de escape. Para que \n tenha sentido
+        -- || é um operador de concatenação
+        'Notas de 200: ',
+        notas200 || E '\n',
+        'Notas de 100: ',
+        notas100 || E '\n',
+        'Notas de 50: ',
+        notas50 || E '\n',
+        'Notas de 20: ',
+        notas20 || E '\n',
+        'Notas de 10: ',
+        notas10 || E '\n',
+        'Notas de 5: ',
+        notas5 || E '\n',
+        'Notas de 2: ',
+        notas2 || E '\n',
+        'Moedas de 1: ',
+        moedas1 || E '\n'
+    );
+
+END;
+$$ 
+DO 
+$$ 
+DECLARE resultado VARCHAR(500);
+
+troco INT := 43;
+
+BEGIN CALL sp_obter_notas_para_compor_o_troco (resultado, troco);
+
+RAISE NOTICE '%', resultado;
+
+END;
+
+$$
