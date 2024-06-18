@@ -32,3 +32,27 @@ BEGIN
 END;
 $$
 
+
+-- Escreva um stored procedure que disponibiliza, utilizando um parâmetro em modo OUT, o número de alunos aprovados dentre aqueles que estudam sozinhos.
+
+SELECT * from tb_estudantes;
+CREATE OR REPLACE PROCEDURE sp_aprovados_sozinhos(
+	 OUT contagem INT
+) LANGUAGE plpgsql
+AS $$
+BEGIN
+	SELECT COUNT(*)
+	INTO contagem
+	FROM tb_estudantes
+	WHERE prep_study = 1 AND grade > 0;
+END;
+$$
+
+DO $$
+DECLARE
+contagem INT;
+BEGIN
+	CALL sp_aprovados_sozinhos(contagem);
+	RAISE NOTICE 'Alunos aprovados que estudam sós : %', contagem;
+END;
+$$
