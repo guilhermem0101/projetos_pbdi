@@ -56,3 +56,29 @@ BEGIN
 	RAISE NOTICE 'Alunos aprovados que estudam sós : %', contagem;
 END;
 $$
+
+
+
+-- Dentre os alunos que têm salário maior que 410, quantos costumams e preparar com frequência (regularmente) para os exames? Escreva uma função que devolva esse número.
+CREATE OR REPLACE FUNCTION fn_renda_aprovados() RETURNS INT
+AS $$
+DECLARE
+	contagem INT;
+BEGIN
+	SELECT COUNT(*) 
+	FROM tb_estudantes
+	WHERE salary = 5 and grade > 0 and prep_exam = 2
+    INTO contagem;
+	
+	RETURN contagem;
+END;
+$$ LANGUAGE plpgsql;
+
+DO $$
+DECLARE 
+	renda_aprovados INT;
+BEGIN
+	renda_aprovados := fn_renda_aprovados();
+	RAISE NOTICE 'Alunos aprovados com renda maior que 410 é : %', renda_aprovados;
+END;
+$$
