@@ -1,0 +1,350 @@
+O SQL Server oferece uma ampla gama de funcionalidades além do SQL dinâmico, abrangendo desde ferramentas básicas de manipulação de dados até recursos avançados de análise, segurança, automação e muito mais. Aqui estão algumas das principais funcionalidades:
+
+1. Procedures Armazenadas (Stored Procedures)
+   - Definição: Um conjunto de instruções SQL compiladas e armazenadas no banco de dados. 
+   - Uso: Reutilização de lógica de negócios, encapsulamento de operações complexas e melhoria de desempenho.
+   - Exemplo:
+     ```sql
+     CREATE PROCEDURE MinhaProcedure
+     AS
+     BEGIN
+         SELECT * FROM MinhaTabela;
+     END;
+     ```
+
+2. Funções Definidas pelo Usuário (User-Defined Functions - UDFs)
+   - Definição: Funções personalizadas que podem ser usadas em consultas SQL para retornar valores escalares ou conjuntos de resultados.
+   - Tipos: Funções escalares (retornam um valor único) e funções de tabela (retornam uma tabela).
+   - Exemplo:
+     ```sql
+     CREATE FUNCTION CalcularDesconto(@Preco DECIMAL(10,2))
+     RETURNS DECIMAL(10,2)
+     AS
+     BEGIN
+         RETURN @Preco * 0.9; -- 10% de desconto
+     END;
+     ```
+
+3. Triggers
+   - Definição: Procedimentos que são executados automaticamente em resposta a certos eventos em uma tabela ou visualização, como `INSERT`, `UPDATE` ou `DELETE`.
+   - Uso: Garantia de integridade de dados, auditoria, e implementação de regras de negócio.
+   - Exemplo:
+     ```sql
+     CREATE TRIGGER trg_AposInsercao
+     ON MinhaTabela
+     AFTER INSERT
+     AS
+     BEGIN
+         PRINT 'Um novo registro foi inserido';
+     END;
+     ```
+
+4. Índices
+   - Definição: Estruturas que melhoram a velocidade de operações de leitura em tabelas, como `SELECT`.
+   - Tipos: Índices Clusterizados (armazena os dados fisicamente em ordem) e Não Clusterizados (apenas referências).
+   - Exemplo:
+     ```sql
+     CREATE INDEX idx_ColunaNome
+     ON MinhaTabela(Nome);
+     ```
+
+5. Views (Visões)
+   - Definição: Consultas pré-definidas que atuam como tabelas virtuais. 
+   - Uso: Simplificação de consultas complexas, segurança (restrição de acesso a colunas específicas), e reutilização de lógica de consultas.
+   - Exemplo:
+     ```sql
+     CREATE VIEW vw_ClientesAtivos
+     AS
+     SELECT Nome, Cidade
+     FROM Clientes
+     WHERE Status = 'Ativo';
+     ```
+
+6. Cursors
+   - Definição: Um mecanismo para percorrer linha por linha o resultado de uma consulta.
+   - Uso: Processamento linha a linha de conjuntos de resultados quando operações em lote não são suficientes.
+   - Exemplo:
+     ```sql
+     DECLARE cursorClientes CURSOR FOR
+     SELECT Nome FROM Clientes;
+     
+     OPEN cursorClientes;
+     FETCH NEXT FROM cursorClientes INTO @NomeCliente;
+     WHILE @@FETCH_STATUS = 0
+     BEGIN
+         PRINT @NomeCliente;
+         FETCH NEXT FROM cursorClientes INTO @NomeCliente;
+     END;
+     
+     CLOSE cursorClientes;
+     DEALLOCATE cursorClientes;
+     ```
+
+7. Common Table Expressions (CTEs)
+   - Definição: Um bloco de consulta temporário que pode ser referenciado em uma instrução `SELECT`, `INSERT`, `UPDATE`, ou `DELETE`.
+   - Uso: Simplificação de consultas complexas e melhoria da legibilidade do código.
+   - Exemplo:
+     ```sql
+     WITH ClientesAtivos AS (
+         SELECT Nome, Cidade
+         FROM Clientes
+         WHERE Status = 'Ativo'
+     )
+     SELECT * FROM ClientesAtivos;
+     ```
+
+8. Transações
+   - Definição: Um grupo de operações SQL que são tratadas como uma unidade única. As transações garantem que todas as operações sejam concluídas com sucesso ou, em caso de falha, que nenhuma mudança seja feita.
+   - Uso: Garantia de integridade de dados e recuperação em caso de falhas.
+   - Exemplo:
+     ```sql
+     BEGIN TRANSACTION;
+     
+     UPDATE Contas SET Saldo = Saldo - 100 WHERE ContaId = 1;
+     UPDATE Contas SET Saldo = Saldo + 100 WHERE ContaId = 2;
+     
+     IF @@ERROR = 0
+         COMMIT TRANSACTION;
+     ELSE
+         ROLLBACK TRANSACTION;
+     ```
+
+9. Partitioning
+   - Definição: Divisão de grandes tabelas e índices em partes menores e gerenciáveis, chamados de partições.
+   - Uso: Melhoria de desempenho e gerenciamento eficiente de grandes volumes de dados.
+   - Exemplo:
+     ```sql
+     CREATE PARTITION FUNCTION MeuFuncParticao(int)
+     AS RANGE LEFT FOR VALUES (2000, 2010, 2020);
+     ```
+
+10. Replication
+   - Definição: Técnica de cópia e distribuição de dados e objetos de banco de dados de um banco de dados para outro e sincronização entre bancos de dados para manter a consistência.
+   - Tipos: Snapshot, Transactional, e Merge Replication.
+   - Uso: Manter consistência entre bancos de dados distribuídos geograficamente, alta disponibilidade, e escalabilidade.
+
+11. SQL Server Agent e Jobs
+   - Definição: Serviço que permite agendar e automatizar tarefas no SQL Server.
+   - Uso: Automação de backups, manutenção de índices, e execução de scripts SQL programados.
+   - Exemplo:
+     ```sql
+     EXEC msdb.dbo.sp_add_job @job_name = 'BackupDiario';
+     ```
+
+12. Full-Text Search
+   - Definição: Sistema de pesquisa que permite realizar buscas sofisticadas em textos dentro do banco de dados.
+   - Uso: Pesquisa de documentos e textos longos dentro de colunas do banco de dados.
+   - Exemplo:
+     ```sql
+     SELECT * FROM Documentos
+     WHERE CONTAINS(Texto, 'SQL Server');
+     ```
+
+13. Serviços de Integração, Análise e Relatórios (SSIS, SSAS, SSRS)
+   - SSIS (SQL Server Integration Services): Ferramenta para ETL (Extract, Transform, Load) e automação de fluxos de trabalho.
+   - SSAS (SQL Server Analysis Services): Suporte a OLAP e modelagem de dados para análise avançada.
+   - SSRS (SQL Server Reporting Services): Ferramenta de geração de relatórios para criar, implantar e gerenciar relatórios interativos.
+
+14. Always On Availability Groups
+   - Definição: Solução de alta disponibilidade e recuperação de desastres que protege múltiplos bancos de dados dentro de um grupo.
+   - Uso: Garantia de disponibilidade contínua e failover automático para minimizar o tempo de inatividade.
+
+15. Encriptação e Segurança
+   - Definição: Ferramentas e funções para encriptação de dados e gerenciamento de segurança.
+   - Tipos: Transparent Data Encryption (TDE), Always Encrypted, Dynamic Data Masking.
+   - Uso: Proteção de dados sensíveis, conformidade com regulamentos e segurança em geral.
+
+16. Temporal Tables
+   - Definição: Tabelas que mantêm automaticamente o histórico completo de alterações nos dados.
+   - Uso: Auditoria, recuperação de dados em pontos específicos no tempo, e análise histórica.
+   - Exemplo:
+     ```sql
+     CREATE TABLE MinhaTabelaHistorica (
+         Id INT PRIMARY KEY,
+         Nome NVARCHAR(100),
+         SysStartTime DATETIME2 GENERATED ALWAYS AS ROW START,
+         SysEndTime DATETIME2 GENERATED ALWAYS AS ROW END,
+         PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime)
+     )
+     WITH (SYSTEM_VERSIONING = ON);
+     ```
+
+Aqui estão mais funcionalidades e recursos avançados oferecidos pelo SQL Server:
+
+17. Data Compression
+   - Definição: Comprime dados em tabelas e índices para reduzir o tamanho de armazenamento e melhorar a eficiência de I/O.
+   - Tipos: Compressão de Linha (Row) e Compressão de Página (Page).
+   - Uso: Redução de custos de armazenamento e melhora na performance de consultas.
+   - Exemplo:
+     ```sql
+     ALTER TABLE MinhaTabela
+     REBUILD PARTITION = ALL
+     WITH (DATA_COMPRESSION = PAGE);
+     ```
+
+18. Indexed Views
+   - Definição: Views que possuem um índice clusterizado, armazenando fisicamente os dados no banco de dados.
+   - Uso: Melhoria de desempenho em consultas complexas que envolvem agregações ou junções.
+   - Exemplo:
+     ```sql
+     CREATE VIEW vw_ContagemClientes
+     WITH SCHEMABINDING
+     AS
+     SELECT ClienteId, COUNT(*) AS TotalPedidos
+     FROM dbo.Pedidos
+     GROUP BY ClienteId;
+
+     CREATE UNIQUE CLUSTERED INDEX idx_vw_ContagemClientes
+     ON vw_ContagemClientes(ClienteId);
+     ```
+
+19. XML e JSON Suporte
+   - Definição: Ferramentas integradas para armazenar, consultar e manipular dados XML e JSON.
+   - Uso: Integração de dados semi-estruturados, como resposta de APIs, diretamente no banco de dados.
+   - Exemplo de XML:
+     ```sql
+     DECLARE @xmlData XML = '<clientes><cliente><nome>João</nome></cliente></clientes>';
+     SELECT @xmlData.value('(/clientes/cliente/nome)[1]', 'NVARCHAR(50)');
+     ```
+   - Exemplo de JSON:
+     ```sql
+     DECLARE @json NVARCHAR(MAX) = '{"Nome": "Maria", "Idade": 30}';
+     SELECT JSON_VALUE(@json, '$.Nome') AS Nome;
+     ```
+
+20. Columnstore Indexes
+   - Definição: Índices que armazenam os dados em colunas, em vez de linhas, otimizando o desempenho para consultas analíticas.
+   - Uso: Consultas OLAP, grandes volumes de dados em data warehouses.
+   - Exemplo:
+     ```sql
+     CREATE COLUMNSTORE INDEX idx_MinhaTabela_ColumnStore
+     ON MinhaTabela (Coluna1, Coluna2);
+     ```
+
+21. Change Data Capture (CDC)
+   - Definição: Rastreamento de mudanças em tabelas e captura dessas alterações para uso em ETL e auditoria.
+   - Uso: Sincronização de dados, auditoria de mudanças e integração com outras fontes de dados.
+   - Exemplo:
+     ```sql
+     EXEC sys.sp_cdc_enable_table
+         @source_schema = N'dbo',
+         @source_name = N'MinhaTabela',
+         @role_name = NULL;
+     ```
+
+22. Change Tracking
+   - Definição: Um mecanismo mais leve que o CDC para rastrear mudanças em tabelas, útil para sincronização de dados.
+   - Uso: Sincronização de dados com outros sistemas ou rastreamento de mudanças sem a sobrecarga do CDC.
+   - Exemplo:
+     ```sql
+     ALTER DATABASE MeuBancoDeDados
+     SET CHANGE_TRACKING = ON
+     (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);
+     ```
+
+23. PolyBase
+   - Definição: Permite consultar dados em fontes externas como Hadoop ou Azure Blob Storage usando T-SQL.
+   - Uso: Integração de big data e fontes de dados heterogêneas com SQL Server.
+   - Exemplo:
+     ```sql
+     CREATE EXTERNAL TABLE MinhaTabelaExterna
+     (Id INT, Nome NVARCHAR(50))
+     WITH (
+         LOCATION='/dados',
+         DATA_SOURCE=MinhaFonteExterna,
+         FILE_FORMAT=MeuFormatoArquivo
+     );
+     ```
+
+24. Query Store
+   - Definição: Recurso que captura e armazena o histórico de execução de consultas, seus planos e estatísticas.
+   - Uso: Análise de desempenho de consultas, otimização e solução de problemas de regressão de performance.
+   - Exemplo:
+     ```sql
+     ALTER DATABASE MeuBancoDeDados
+     SET QUERY_STORE = ON;
+     ```
+
+25. Resource Governor
+   - Definição: Ferramenta para gerenciar e limitar o uso de recursos (CPU, memória) por sessões e consultas específicas.
+   - Uso: Controle de recursos para garantir que consultas intensivas não afetam o desempenho global do sistema.
+   - Exemplo:
+     ```sql
+     CREATE RESOURCE POOL PoolRestrito
+     WITH (MAX_CPU_PERCENT = 25, MAX_MEMORY_PERCENT = 50);
+     ```
+
+26. Stretch Database
+   - Definição: Permite mover dados frios (pouco acessados) de tabelas para a nuvem (Azure) sem modificar a aplicação.
+   - Uso: Armazenamento de dados históricos na nuvem para reduzir custos de armazenamento local e melhorar a performance.
+   - Exemplo:
+     ```sql
+     ALTER TABLE MinhaTabela
+     SET (REMOTE_DATA_ARCHIVE = ON);
+     ```
+
+27. Data Masking
+   - Definição: Máscara dinamicamente os dados sensíveis em resultados de consultas para usuários não autorizados.
+   - Tipos: Máscara padrão, máscara de valor fixo, máscara de dados aleatórios, etc.
+   - Uso: Proteção de dados sensíveis sem a necessidade de alterar o código da aplicação.
+   - Exemplo:
+     ```sql
+     CREATE TABLE Clientes (
+         Id INT PRIMARY KEY,
+         Nome NVARCHAR(100) MASKED WITH (FUNCTION = 'partial(1,"X",0)') NULL
+     );
+     ```
+
+28. Filestream
+   - Definição: Permite armazenar grandes objetos binários (BLOBs) como arquivos no sistema de arquivos e referenciá-los no SQL Server.
+   - Uso: Armazenamento eficiente e gerenciamento de arquivos grandes (imagens, vídeos, documentos) associados a dados relacionais.
+   - Exemplo:
+     ```sql
+     CREATE TABLE Documentos (
+         Id INT PRIMARY KEY,
+         NomeArquivo NVARCHAR(255),
+         Conteudo VARBINARY(MAX) FILESTREAM
+     );
+     ```
+
+29. In-Memory OLTP
+   - Definição: Tecnologia que permite criar tabelas e procedimentos armazenados otimizados para memória, melhorando significativamente o desempenho.
+   - Uso: Aplicações de alta performance que requerem baixa latência e alta taxa de transações.
+   - Exemplo:
+     ```sql
+     CREATE TABLE TabelaMemoria
+     (Id INT PRIMARY KEY NONCLUSTERED HASH WITH (BUCKET_COUNT = 1000000))
+     WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+     ```
+
+30. Service Broker
+   - Definição: Plataforma para criar aplicações assíncronas, distribuídas e de troca de mensagens dentro do SQL Server.
+   - Uso: Sistemas de fila de mensagens, processamento assíncrono e integração entre diferentes partes de uma aplicação.
+   - Exemplo:
+     ```sql
+     CREATE QUEUE FilaProcessamento;
+     CREATE SERVICE ServicoProcessamento ON QUEUE FilaProcessamento ([DEFAULT]);
+     ```
+
+31. Log Shipping
+   - Definição: Técnica de alta disponibilidade e recuperação de desastres que envolve o envio de logs de transações de um servidor primário para um servidor secundário.
+   - Uso: Manutenção de um banco de dados secundário atualizado que pode ser usado para failover em caso de falha do servidor primário.
+
+32. Database Mirroring
+   - Definição: Técnica de alta disponibilidade que mantém duas cópias de um banco de dados em dois servidores diferentes, com uma terceira testemunha opcional para failover automático.
+   - Uso: Alta disponibilidade e failover rápido para sistemas críticos.
+
+33. Data Quality Services (DQS)
+   - Definição: Ferramenta para limpar, padronizar e enriquecer os dados, garantindo a qualidade e consistência dos dados armazenados.
+   - Uso: Governança de dados e manutenção da qualidade de dados corporativos.
+
+34. Master Data Services (MDS)
+   - Definição: Plataforma para gerenciar os dados mestres da empresa, garantindo consistência e integridade em diferentes sistemas.
+   - Uso: Centralização e gerenciamento dos dados principais, como clientes, produtos e fornecedores.
+
+35. SQL Server Machine Learning Services
+   - Definição: Integração de linguagens de programação como R e Python diretamente no SQL Server para executar scripts de aprendizado de máquina e análise de dados.
+   - Uso: Implementação de modelos de machine learning diretamente no banco de dados para análise preditiva e processamento de dados em grande escala.
+
+36. Graph Database Features
+   - Def

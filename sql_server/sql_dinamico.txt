@@ -1,0 +1,69 @@
+--Exemplo Básico com EXEC
+
+DECLARE @sql NVARCHAR(1000)
+DECLARE @tableName NVARCHAR(50) = 'MinhaTabela'
+DECLARE @columnName NVARCHAR(50) = 'Nome'
+
+-- Construindo a consulta SQL dinamicamente
+SET @sql = 'SELECT ' + @columnName + ' FROM ' + @tableName
+
+-- Executando a consulta SQL dinâmica
+EXEC(@sql);
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- Exemplo com sp_executesql e Parâmetros
+
+DECLARE @sql NVARCHAR(1000)
+DECLARE @tableName NVARCHAR(50) = 'MinhaTabela'
+DECLARE @columnName NVARCHAR(50) = 'Nome'
+DECLARE @paramValue NVARCHAR(50) = 'João'
+
+-- Construindo a consulta SQL dinamicamente com parâmetros
+SET @sql = 'SELECT * FROM ' + @tableName + ' WHERE ' + @columnName + ' = @value'
+
+-- Executando a consulta SQL dinâmica com parâmetros
+EXEC sp_executesql @sql, N'@value NVARCHAR(50)', @value = @paramValue;
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- Armazenando um Valor Retornado por SQL Dinâmico
+
+DECLARE @sql NVARCHAR(1000);
+DECLARE @tableName NVARCHAR(50) = 'MinhaTabela';
+DECLARE @rowCount INT;
+
+-- Construindo a instrução SQL dinâmica
+SET @sql = 'SELECT @count = COUNT(*) FROM ' + @tableName;
+
+-- Executando a instrução SQL dinâmica e armazenando o valor retornado
+EXEC sp_executesql @sql, N'@count INT OUTPUT', @count = @rowCount OUTPUT;
+
+-- Exibindo o valor armazenado
+PRINT 'Número de linhas: ' + CAST(@rowCount AS VARCHAR);
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
